@@ -15,13 +15,14 @@ namespace BassClefStudio.TurtleGraphics.Win2D
     /// </summary>
     public class Win2DTurtleGraphicsProvider : ITurtleGraphicsProvider
     {
-        private float scale;
+        private float scale = 1;
         /// <inheritdoc/>
-        public float Scale 
+        public float Scale
         {
             get => scale;
             private set
             {
+                scale = value;
                 DrawingSession.Transform = Matrix3x2.CreateScale(scale, scale);
             } 
         }
