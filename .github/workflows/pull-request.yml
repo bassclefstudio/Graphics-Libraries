@@ -1,0 +1,30 @@
+name: .NET 5 Build and Test
+
+on:
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Add GitHub Packages for Nuget
+      run: dotnet nuget add source https://nuget.pkg.github.com/bassclefstudio/index.json --name "GPR" --username bassclefstudio --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
+    - name: Install dependencies
+      run: |
+        dotnet restore ./BassClefStudio.TurtleGraphics/BassClefStudio.TurtleGraphics.csproj
+        dotnet restore ./BassClefStudio.TurtleGraphics.Tests/BassClefStudio.TurtleGraphics.Tests.csproj
+    - name: Build
+      run: |
+        dotnet build ./BassClefStudio.TurtleGraphics/BassClefStudio.TurtleGraphics.csproj --configuration Release --no-restore
+        dotnet build ./BassClefStudio.TurtleGraphics.Tests/BassClefStudio.TurtleGraphics.Tests.csproj --configuration Release --no-restore
+    - name: Test
+      run: dotnet test ./BassClefStudio.TurtleGraphics.Tests/BassClefStudio.TurtleGraphics.Tests.csproj --no-restore --verbosity normal
