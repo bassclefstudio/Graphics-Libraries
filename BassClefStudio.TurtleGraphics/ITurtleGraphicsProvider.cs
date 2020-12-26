@@ -32,8 +32,9 @@ namespace BassClefStudio.TurtleGraphics
         /// Sets the view of the <see cref="ITurtleGraphicsProvider"/>.
         /// </summary>
         /// <param name="viewSize">The size, in view co-ordinates, of the available area.</param>
+        /// <param name="desiredSize">The desired size of the drawing area, which will be scaled as drawing co-ordinates.</param>
         /// <param name="zoomType">A <see cref="ZoomType"/> value indicating how the <see cref="ITurtleGraphicsProvider"/> should set the <see cref="Scale"/> of the drawing area.</param>
-        void SetView(Vector2 viewSize, ZoomType zoomType = ZoomType.FitAll);
+        void SetView(Vector2 viewSize, Vector2 desiredSize, ZoomType zoomType = ZoomType.FitAll);
 
         /// <summary>
         /// The <see cref="float"/> size (diameter, in drawing co-ordinates) of the pen used to draw lines and outlines.

@@ -11,17 +11,24 @@ namespace BassClefStudio.TurtleGraphics
     public class UpdateRequestEventArgs : EventArgs
     {
         /// <summary>
-        /// The size, in view co-ordinates, of the available view space.
+        /// The size, in view co-ordinates, of the available view space, or 'null' if no such size is available.
         /// </summary>
-        public Vector2 ViewSize { get; }
+        public Vector2? ViewSize { get; }
+
+        /// <summary>
+        /// The associated <see cref="ITurtleGraphicsProvider"/> that can be used to execute draw commands.
+        /// </summary>
+        public ITurtleGraphicsProvider GraphicsProvider { get; }
 
         /// <summary>
         /// Creates a new <see cref="UpdateRequestEventArgs"/>.
         /// </summary>
+        /// <param name="graphicsProvider">The associated <see cref="ITurtleGraphicsProvider"/> that can be used to execute draw commands.</param>
         /// <param name="viewSize">The size, in view co-ordinates, of the available view space.</param>
-        public UpdateRequestEventArgs(Vector2 viewSize)
+        public UpdateRequestEventArgs(Vector2? viewSize, ITurtleGraphicsProvider graphicsProvider)
         {
             ViewSize = viewSize;
+            GraphicsProvider = graphicsProvider;
         }
     }
 }

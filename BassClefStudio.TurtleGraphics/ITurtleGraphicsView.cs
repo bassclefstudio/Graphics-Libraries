@@ -5,9 +5,9 @@ using System.Text;
 namespace BassClefStudio.TurtleGraphics
 {
     /// <summary>
-    /// Represents an <see cref="ITurtleGraphicsProvider"/> that is providing UI or graphics content to a view.
+    /// Represents a control that is providing turtle-graphics content to a view.
     /// </summary>
-    public interface ITurtleGraphicsView : ITurtleGraphicsProvider
+    public interface ITurtleGraphicsView
     {
         /// <summary>
         /// An event fired whenever the <see cref="ITurtleGraphicsView"/> requests a redraw of the UI.
