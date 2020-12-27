@@ -20,11 +20,11 @@ jobs:
       run: dotnet nuget add source https://nuget.pkg.github.com/bassclefstudio/index.json --name "GPR" --username bassclefstudio --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
     - name: Install dependencies
       run: |
-        dotnet restore ./BassClefStudio.TurtleGraphics/BassClefStudio.TurtleGraphics.csproj
-        dotnet restore ./BassClefStudio.TurtleGraphics.Tests/BassClefStudio.TurtleGraphics.Tests.csproj
+        dotnet restore ./BassClefStudio.Graphics/BassClefStudio.Graphics.csproj
+        dotnet restore ./BassClefStudio.Graphics.Tests/BassClefStudio.Graphics.Tests.csproj
     - name: Build
       run: |
-        dotnet build ./BassClefStudio.TurtleGraphics/BassClefStudio.TurtleGraphics.csproj --configuration Release --no-restore
-        dotnet build ./BassClefStudio.TurtleGraphics.Tests/BassClefStudio.TurtleGraphics.Tests.csproj --configuration Release --no-restore
+        dotnet build ./BassClefStudio.Graphics/BassClefStudio.Graphics.csproj --configuration Release --no-restore
+        dotnet build ./BassClefStudio.Graphics.Tests/BassClefStudio.Graphics.Tests.csproj --configuration Release --no-restore
     - name: Test
-      run: dotnet test ./BassClefStudio.TurtleGraphics.Tests/BassClefStudio.TurtleGraphics.Tests.csproj --no-restore --verbosity normal
+      run: dotnet test ./BassClefStudio.Graphics.Tests/BassClefStudio.Graphics.Tests.csproj --no-restore --verbosity normal

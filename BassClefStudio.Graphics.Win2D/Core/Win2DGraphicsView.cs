@@ -1,19 +1,14 @@
-﻿using BassClefStudio.NET.Core.Primitives;
-using Microsoft.Graphics.Canvas;
+﻿using BassClefStudio.Graphics.Core;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BassClefStudio.TurtleGraphics.Win2D
+namespace BassClefStudio.Graphics.Core
 {
     /// <summary>
-    /// Represents a Win2D implementation of <see cref="ITurtleGraphicsView"/> that draws to a <see cref="CanvasControl"/>.
+    /// Represents a Win2D implementation of <see cref="IGraphicsView"/> that draws to a <see cref="CanvasControl"/>.
     /// </summary>
-    public class Win2DTurtleGraphicsView : ITurtleGraphicsView
+    public class Win2DGraphicsView : IGraphicsView
     {
         private bool autoRefresh;
         /// <inheritdoc/>
@@ -24,20 +19,20 @@ namespace BassClefStudio.TurtleGraphics.Win2D
         }
 
         /// <summary>
-        /// Creates a <see cref="Win2DTurtleGraphicsView"/> from a non-animated <see cref="CanvasControl"/>.
+        /// Creates a <see cref="Win2DGraphicsView"/> from a non-animated <see cref="CanvasControl"/>.
         /// </summary>
         /// <param name="canvas">The <see cref="CanvasControl"/> Win2D canvas to draw on.</param>
-        public Win2DTurtleGraphicsView(CanvasControl canvas)
+        public Win2DGraphicsView(CanvasControl canvas)
         {
             canvas.Draw += CanvasStaticDrawRequested;
             autoRefresh = false;
         }
 
         /// <summary>
-        /// Creates a <see cref="Win2DTurtleGraphicsView"/> from a non-animated <see cref="CanvasAnimatedControl"/>.
+        /// Creates a <see cref="Win2DGraphicsView"/> from a non-animated <see cref="CanvasAnimatedControl"/>.
         /// </summary>
         /// <param name="canvas">The <see cref="CanvasAnimatedControl"/> Win2D canvas to draw on.</param>
-        public Win2DTurtleGraphicsView(CanvasAnimatedControl canvas)
+        public Win2DGraphicsView(CanvasAnimatedControl canvas)
         {
             canvas.Draw += CanvasAnimatedDrawRequested;
             autoRefresh = true;
@@ -50,8 +45,8 @@ namespace BassClefStudio.TurtleGraphics.Win2D
                 UpdateRequested?.Invoke(
                     this,
                     new UpdateRequestEventArgs(
-                        new Vector2((float)canvas.ActualWidth, (float)canvas.ActualHeight),
-                        new Win2DTurtleGraphicsProvider(args.DrawingSession)));
+                        canvas.Size.ToVector2(),
+                        new Win2DGraphicsProvider(args.DrawingSession)));
             }
             else
             {
@@ -59,17 +54,17 @@ namespace BassClefStudio.TurtleGraphics.Win2D
                        this,
                        new UpdateRequestEventArgs(
                            null,
-                           new Win2DTurtleGraphicsProvider(args.DrawingSession)));
+                           new Win2DGraphicsProvider(args.DrawingSession)));
             }
-        }
+        } 
 
         private void CanvasStaticDrawRequested(CanvasControl sender, CanvasDrawEventArgs args)
         {
             UpdateRequested?.Invoke(
-                this, 
-                new UpdateRequestEventArgs(
-                    new Vector2((float)sender.ActualWidth, (float)sender.ActualHeight),
-                    new Win2DTurtleGraphicsProvider(args.DrawingSession)));
+                    this,
+                    new UpdateRequestEventArgs(
+                        sender.Size.ToVector2(),
+                        new Win2DGraphicsProvider(args.DrawingSession)));
         }
 
         /// <inheritdoc/>

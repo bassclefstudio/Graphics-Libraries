@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("BassClefStudio.TurtleGraphics.Win2D")]
+[assembly: AssemblyTitle("BassClefStudio.Graphics.Turtle.Win2D")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("BassClefStudio.TurtleGraphics.Win2D")]
+[assembly: AssemblyProduct("BassClefStudio.Graphics.Turtle.Win2D")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

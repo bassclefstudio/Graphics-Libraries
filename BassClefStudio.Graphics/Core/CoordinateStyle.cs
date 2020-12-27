@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BassClefStudio.TurtleGraphics
+namespace BassClefStudio.Graphics.Core
 {
     /// <summary>
     /// An enum indicating how the drawing co-ordinate plane aligns with the output view.
