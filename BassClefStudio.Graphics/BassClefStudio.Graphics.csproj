@@ -5,9 +5,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>BassClefStudio</Authors>
     <Version>1.0.0</Version>
-    <Description>A base library for 'turtle' (pen-like) graphics, implemented in .NET Standard.</Description>
-    <PackageProjectUrl>https://github.com/BassClefStudio.Graphics.Turtle</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/BassClefStudio.Graphics.Turtle.git</RepositoryUrl>
+    <Description>A base library for managing cross-platform systems for drawing vector and turtle graphics, implemented in .NET Standard.</Description>
+    <PackageProjectUrl>https://github.com/bassclefstudio/Graphics-Libraries</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/bassclefstudio/Graphics-Libraries.git</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
