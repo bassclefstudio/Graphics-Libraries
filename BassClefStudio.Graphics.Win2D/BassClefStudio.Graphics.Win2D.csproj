@@ -7,8 +7,8 @@
     <ProjectGuid>{AA5495C0-6A4B-42E9-8BAC-A3B6A9A4004B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BassClefStudio.TurtleGraphics.Win2D</RootNamespace>
-    <AssemblyName>BassClefStudio.TurtleGraphics.Win2D</AssemblyName>
+    <RootNamespace>BassClefStudio.Graphics</RootNamespace>
+    <AssemblyName>BassClefStudio.Graphics.Win2D</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
@@ -121,8 +121,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Win2DTurtleGraphicsView.cs" />
-    <Compile Include="Win2DTurtleGraphicsProvider.cs" />
+    <Compile Include="Turtle\Win2DTurtleGraphicsView.cs" />
+    <Compile Include="Turtle\Win2DTurtleGraphicsProvider.cs" />
     <EmbeddedResource Include="Properties\BassClefStudio.TurtleGraphics.Win2D.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -134,9 +134,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BassClefStudio.TurtleGraphics\BassClefStudio.TurtleGraphics.csproj">
-      <Project>{fb05751f-14fa-4bad-bfb0-c66ad2a53ccd}</Project>
-      <Name>BassClefStudio.TurtleGraphics</Name>
+    <ProjectReference Include="..\BassClefStudio.Graphics\BassClefStudio.Graphics.csproj">
+      <Project>{b242592b-83fb-4e30-9242-78259e0dd6fc}</Project>
+      <Name>BassClefStudio.Graphics</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

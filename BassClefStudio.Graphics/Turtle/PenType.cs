@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BassClefStudio.TurtleGraphics
+namespace BassClefStudio.Graphics.Turtle
 {
     /// <summary>
     /// An enum indicating the type of end the <see cref="ITurtleGraphicsProvider"/> pen should have while drawing lines.

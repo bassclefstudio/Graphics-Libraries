@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BassClefStudio.TurtleGraphics
+namespace BassClefStudio.Graphics.Turtle
 {
     /// <summary>
     /// Represents a drawable surface (either in an app view, or in a file) on which drawing commands can be executed.

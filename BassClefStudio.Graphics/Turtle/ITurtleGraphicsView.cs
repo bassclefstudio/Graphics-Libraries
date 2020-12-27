@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BassClefStudio.TurtleGraphics
+namespace BassClefStudio.Graphics.Turtle
 {
     /// <summary>
     /// Represents a control that is providing turtle-graphics content to a view.

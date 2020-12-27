@@ -2,7 +2,7 @@
 using System;
 using System.Numerics;
 
-namespace BassClefStudio.TurtleGraphics.Win2D
+namespace BassClefStudio.Graphics.Turtle
 {
     /// <summary>
     /// Represents a Win2D implementation of <see cref="ITurtleGraphicsView"/> that draws to a <see cref="CanvasControl"/>.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace BassClefStudio.TurtleGraphics
+namespace BassClefStudio.Graphics.Turtle
 {
     /// <summary>
     /// An <see cref="EventArgs"/> for <see cref="ITurtleGraphicsView.UpdateRequested"/>, containing information about the current state of the view control.

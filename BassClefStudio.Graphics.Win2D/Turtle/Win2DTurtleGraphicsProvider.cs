@@ -8,7 +8,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BassClefStudio.TurtleGraphics.Win2D
+namespace BassClefStudio.Graphics.Turtle
 {
     /// <summary>
     /// Represents a Win2D implementation of <see cref="ITurtleGraphicsProvider"/> that draws to a <see cref="CanvasDrawingSession"/>.

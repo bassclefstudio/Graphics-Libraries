@@ -20,12 +20,12 @@ jobs:
       run: |
         nuget sources add -Source https://nuget.pkg.github.com/bassclefstudio/index.json -Name "GPR" -Username bassclefstudio -Password ${{ secrets.GITHUB_TOKEN }} -StorePasswordInClearText
     - name: MSBuild
-      run: msbuild BassClefStudio.TurtleGraphics.sln -t:build -p:Configuration=Debug -p:Platform="Any CPU" -m -restore
+      run: msbuild BassClefStudio.Graphics.sln -t:build -p:Configuration=Debug -p:Platform="Any CPU" -m -restore
     - name: Nuget Pack
       run: |
-        dotnet pack .\BassClefStudio.TurtleGraphics\BassClefStudio.TurtleGraphics.csproj --no-build
-        nuget pack .\BassClefStudio.TurtleGraphics.Win2D\BassClefStudio.TurtleGraphics.Win2D.csproj
+        dotnet pack .\BassClefStudio.Graphics\BassClefStudio.Graphics.csproj --no-build
+        nuget pack .\BassClefStudio.Graphics.Win2D\BassClefStudio.Graphics.Win2D.csproj
     - name: Nuget Push
       run: |
         nuget push "*.nupkg" -Source "GPR" -SkipDuplicate -NoSymbols
-        dotnet nuget push ".\BassClefStudio.TurtleGraphics\bin\Debug\*.nupkg" --source "GPR" --skip-duplicate --no-symbols true -k ${{ secrets.GITHUB_TOKEN }}
+        dotnet nuget push ".\BassClefStudio.Graphics\bin\Debug\*.nupkg" --source "GPR" --skip-duplicate --no-symbols true -k ${{ secrets.GITHUB_TOKEN }}
