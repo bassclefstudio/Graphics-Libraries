@@ -1,47 +1,39 @@
-﻿using BassClefStudio.NET.Core.Primitives;
+﻿using BassClefStudio.Graphics.Core;
+using BassClefStudio.Graphics.Svg;
+using BassClefStudio.Graphics.Turtle;
+using BassClefStudio.NET.Core.Primitives;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Svg;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BassClefStudio.Graphics.Turtle
+namespace BassClefStudio.Graphics.Core
 {
     /// <summary>
-    /// Represents a Win2D implementation of <see cref="ITurtleGraphicsProvider"/> that draws to a <see cref="CanvasDrawingSession"/>.
+    /// Represents a Win2D implementation of <see cref="IGraphicsProvider"/> that draws to a <see cref="CanvasDrawingSession"/>.
     /// </summary>
-    public class Win2DTurtleGraphicsProvider : ITurtleGraphicsProvider
+    public class Win2DGraphicsProvider : ITurtleGraphicsProvider, ISvgGraphicsProvider
     {
-        /// <inheritdoc/>
-        public float Scale { get; private set; } = 1;
-
-        /// <inheritdoc/>
-        public Vector2 EffectiveSize { get; private set; }
-
-        /// <inheritdoc/>
-        public float PenSize { get; set; }
-
-        /// <inheritdoc/>
-        public Color PenColor { get; set; }
-
-        /// <inheritdoc/>
-        public PenType PenType { get; set; }
+        #region Win2D
 
         /// <summary>
-        /// The <see cref="CanvasDrawingSession"/> that this <see cref="Win2DTurtleGraphicsProvider"/> uses to execute drawing commands.
+        /// The <see cref="CanvasDrawingSession"/> that this <see cref="Win2DGraphicsProvider"/> uses to execute drawing commands.
         /// </summary>
         public CanvasDrawingSession DrawingSession { get; }
 
         /// <summary>
-        /// Creates a new <see cref="Win2DTurtleGraphicsProvider"/> to handle the given <see cref="CanvasDrawingSession"/>.
+        /// Creates a new <see cref="Win2DGraphicsProvider"/> to handle the given <see cref="CanvasDrawingSession"/>.
         /// </summary>
-        /// <param name="drawingSession">The <see cref="CanvasDrawingSession"/> that this <see cref="Win2DTurtleGraphicsProvider"/> uses to execute drawing commands.</param>
-        public Win2DTurtleGraphicsProvider(CanvasDrawingSession drawingSession)
+        /// <param name="drawingSession">The <see cref="CanvasDrawingSession"/> that this <see cref="Win2DGraphicsProvider"/> uses to execute drawing commands.</param>
+        public Win2DGraphicsProvider(CanvasDrawingSession drawingSession)
         {
-            if(drawingSession == null)
+            if (drawingSession == null)
             {
                 throw new ArgumentNullException("The CanvasDrawingSession managed by this ITurtleGraphicsProvider cannot be null.");
             }
@@ -49,18 +41,21 @@ namespace BassClefStudio.Graphics.Turtle
             DrawingSession = drawingSession;
         }
 
+        #endregion
+        #region SharedGraphics
+
         /// <inheritdoc/>
-        public void Clear(Color baseColor)
-        {
-            DrawingSession.Clear(baseColor.GetColor());
-        }
+        public float Scale { get; private set; } = 1;
+
+        /// <inheritdoc/>
+        public Vector2 EffectiveSize { get; private set; }
 
         /// <inheritdoc/>
         public void SetView(Vector2 viewSize, Vector2 desiredSize, ZoomType zoomType = ZoomType.FitAll, CoordinateStyle coordinateStyle = CoordinateStyle.TopLeft)
         {
             float xRatio = (viewSize.X / desiredSize.X);
             float yRatio = (viewSize.Y / desiredSize.Y);
-            if(zoomType == ZoomType.FitAll && xRatio > yRatio
+            if (zoomType == ZoomType.FitAll && xRatio > yRatio
                 || zoomType == ZoomType.FillView && yRatio > xRatio)
             {
                 Scale = yRatio;
@@ -77,12 +72,12 @@ namespace BassClefStudio.Graphics.Turtle
         private void SetTransform(float scale, Vector2 drawSize, Vector2 centerPoint, CoordinateStyle coordinateStyle)
         {
             Matrix3x2 transform = Matrix3x2.Identity;
-            if(coordinateStyle == CoordinateStyle.TopLeft)
+            if (coordinateStyle == CoordinateStyle.TopLeft)
             {
                 transform = Matrix3x2.CreateScale(scale, scale);
                 transform.Translation = centerPoint - (drawSize / 2);
             }
-            else if(coordinateStyle == CoordinateStyle.Center)
+            else if (coordinateStyle == CoordinateStyle.Center)
             {
                 transform = Matrix3x2.CreateScale(scale, -scale);
                 transform.Translation = centerPoint;
@@ -91,10 +86,44 @@ namespace BassClefStudio.Graphics.Turtle
         }
 
         /// <inheritdoc/>
+        public async Task FlushAsync()
+        {
+            DrawingSession.Flush();
+        }
+
+        #endregion
+        #region Svg
+
+        /// <inheritdoc/>
+        public void DrawSvg(string xml)
+        {
+            var svg = CanvasSvgDocument.LoadFromXml(this.DrawingSession, xml);
+            DrawingSession.DrawSvg(svg, EffectiveSize.ToSize());
+        }
+
+        #endregion
+        #region Turtle
+
+        /// <inheritdoc/>
+        public float PenSize { get; set; }
+
+        /// <inheritdoc/>
+        public Color PenColor { get; set; }
+
+        /// <inheritdoc/>
+        public PenType PenType { get; set; }
+
+        /// <inheritdoc/>
+        public void Clear(Color baseColor)
+        {
+            DrawingSession.Clear(baseColor.GetColor());
+        }
+
+        /// <inheritdoc/>
         public void DrawLine(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null, PenType? penType = null)
         {
             DrawingSession.DrawLine(start, end, (penColor ?? PenColor).GetColor(), (penSize ?? PenSize));
-            if((penType ?? PenType) == PenType.Round)
+            if ((penType ?? PenType) == PenType.Round)
             {
                 FillEllipse(start, new Vector2((penSize ?? PenSize) / 2), penColor);
                 FillEllipse(end, new Vector2((penSize ?? PenSize) / 2), penColor);
@@ -108,7 +137,7 @@ namespace BassClefStudio.Graphics.Turtle
             {
                 throw new ArgumentException("Cannot create a polygon geometry without two or more points.");
             }
-            else if(points.Length == 2)
+            else if (points.Length == 2)
             {
                 DrawLine(points[0], points[1], penColor, penSize);
             }
@@ -145,11 +174,7 @@ namespace BassClefStudio.Graphics.Turtle
             DrawingSession.FillEllipse(center, radii.X, radii.Y, (penColor ?? PenColor).GetColor());
         }
 
-        /// <inheritdoc/>
-        public async Task FlushAsync()
-        {
-            DrawingSession.Flush();
-        }
+        #endregion
     }
 
     internal static class ColorExtensions
