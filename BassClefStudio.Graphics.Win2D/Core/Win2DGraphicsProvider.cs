@@ -4,6 +4,7 @@ using BassClefStudio.Graphics.Turtle;
 using BassClefStudio.NET.Core.Primitives;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Svg;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -94,17 +95,10 @@ namespace BassClefStudio.Graphics.Core
         #region Svg
 
         /// <inheritdoc/>
-        public void DrawSvg(ISvgDocument document)
+        public void DrawSvg(string xml)
         {
-            if(document is Win2DSvgDocument win2dDoc)
-            {
-                DrawingSession.DrawSvg(win2dDoc.SvgCanvas, EffectiveSize.ToSize());
-            }
-            else
-            {
-                Win2DSvgDocument myDoc = new Win2DSvgDocument(this.DrawingSession, document.ToXml());
-                DrawSvg(myDoc);
-            }
+            var svg = CanvasSvgDocument.LoadFromXml(this.DrawingSession, xml);
+            DrawingSession.DrawSvg(svg, EffectiveSize.ToSize());
         }
 
         #endregion

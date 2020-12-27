@@ -14,7 +14,7 @@ namespace BassClefStudio.Graphics.Svg
         /// <summary>
         /// Draws an SVG vector image onto the associated <see cref="IGraphicsView"/> or file.
         /// </summary>
-        /// <param name="document">The SVG document, as an <see cref="ISvgDocument"/> that can be read by the underlying graphics system.</param>
-        void DrawSvg(ISvgDocument document);
+        /// <param name="xml">The SVG document as XML text that can be read by the underlying graphics system.</param>
+        void DrawSvg(string xml);
     }
 }
