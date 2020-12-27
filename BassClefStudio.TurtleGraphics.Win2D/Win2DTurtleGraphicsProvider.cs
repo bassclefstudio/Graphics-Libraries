@@ -15,17 +15,8 @@ namespace BassClefStudio.TurtleGraphics.Win2D
     /// </summary>
     public class Win2DTurtleGraphicsProvider : ITurtleGraphicsProvider
     {
-        private float scale = 1;
         /// <inheritdoc/>
-        public float Scale
-        {
-            get => scale;
-            private set
-            {
-                scale = value;
-                DrawingSession.Transform = Matrix3x2.CreateScale(scale, scale);
-            } 
-        }
+        public float Scale { get; private set; } = 1;
 
         /// <inheritdoc/>
         public Vector2 EffectiveSize { get; private set; }
@@ -62,7 +53,7 @@ namespace BassClefStudio.TurtleGraphics.Win2D
         }
 
         /// <inheritdoc/>
-        public void SetView(Vector2 viewSize, Vector2 desiredSize, ZoomType zoomType = ZoomType.FitAll)
+        public void SetView(Vector2 viewSize, Vector2 desiredSize, ZoomType zoomType = ZoomType.FitAll, CoordinateStyle coordinateStyle = CoordinateStyle.TopLeft)
         {
             float xRatio = (viewSize.X / desiredSize.X);
             float yRatio = (viewSize.Y / desiredSize.Y);
@@ -77,6 +68,23 @@ namespace BassClefStudio.TurtleGraphics.Win2D
             }
 
             EffectiveSize = desiredSize;
+            SetTransform(Scale, EffectiveSize * Scale, viewSize / 2, coordinateStyle);
+        }
+
+        private void SetTransform(float scale, Vector2 drawSize, Vector2 centerPoint, CoordinateStyle coordinateStyle)
+        {
+            Matrix3x2 transform = Matrix3x2.Identity;
+            if(coordinateStyle == CoordinateStyle.TopLeft)
+            {
+                transform = Matrix3x2.CreateScale(scale, scale);
+                transform.Translation = centerPoint - (drawSize / 2);
+            }
+            else if(coordinateStyle == CoordinateStyle.Center)
+            {
+                transform = Matrix3x2.CreateScale(scale, -scale);
+                transform.Translation = centerPoint;
+            }
+            DrawingSession.Transform = transform;
         }
 
         /// <inheritdoc/>

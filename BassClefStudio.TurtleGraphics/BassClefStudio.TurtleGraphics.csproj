@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>BassClefStudio</Authors>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Description>A base library for 'turtle' (pen-like) graphics, implemented in .NET Standard.</Description>
     <PackageProjectUrl>https://github.com/bassclefstudio/TurtleGraphics</PackageProjectUrl>
     <RepositoryUrl>https://github.com/bassclefstudio/TurtleGraphics.git</RepositoryUrl>
