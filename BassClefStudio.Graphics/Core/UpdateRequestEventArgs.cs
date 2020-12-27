@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace BassClefStudio.Graphics.Turtle
+namespace BassClefStudio.Graphics.Core
 {
     /// <summary>
-    /// An <see cref="EventArgs"/> for <see cref="ITurtleGraphicsView.UpdateRequested"/>, containing information about the current state of the view control.
+    /// An <see cref="EventArgs"/> for <see cref="IGraphicsView.UpdateRequested"/>, containing information about the current state of the view control.
     /// </summary>
     public class UpdateRequestEventArgs : EventArgs
     {
@@ -16,16 +16,16 @@ namespace BassClefStudio.Graphics.Turtle
         public Vector2? ViewSize { get; }
 
         /// <summary>
-        /// The associated <see cref="ITurtleGraphicsProvider"/> that can be used to execute draw commands.
+        /// The associated <see cref="IGraphicsProvider"/> that can be used to execute draw commands.
         /// </summary>
-        public ITurtleGraphicsProvider GraphicsProvider { get; }
+        public IGraphicsProvider GraphicsProvider { get; }
 
         /// <summary>
         /// Creates a new <see cref="UpdateRequestEventArgs"/>.
         /// </summary>
-        /// <param name="graphicsProvider">The associated <see cref="ITurtleGraphicsProvider"/> that can be used to execute draw commands.</param>
+        /// <param name="graphicsProvider">The associated <see cref="IGraphicsProvider"/> that can be used to execute draw commands.</param>
         /// <param name="viewSize">The size, in view co-ordinates, of the available view space.</param>
-        public UpdateRequestEventArgs(Vector2? viewSize, ITurtleGraphicsProvider graphicsProvider)
+        public UpdateRequestEventArgs(Vector2? viewSize, IGraphicsProvider graphicsProvider)
         {
             ViewSize = viewSize;
             GraphicsProvider = graphicsProvider;
