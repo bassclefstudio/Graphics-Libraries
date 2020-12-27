@@ -112,6 +112,12 @@ namespace BassClefStudio.TurtleGraphics.Win2D
         }
 
         /// <inheritdoc/>
+        public void DrawEllipse(Vector2 center, Vector2 radii, Color? penColor = null, float? penSize = null)
+        {
+            DrawingSession.DrawEllipse(center, radii.X, radii.Y, (penColor ?? PenColor).GetColor());
+        }
+
+        /// <inheritdoc/>
         public void FillPolygon(Vector2[] points, Color? penColor = null)
         {
             if (points.Length <= 2)
@@ -123,6 +129,12 @@ namespace BassClefStudio.TurtleGraphics.Win2D
                 var geometry = CanvasGeometry.CreatePolygon(DrawingSession, points);
                 DrawingSession.FillGeometry(geometry, (penColor ?? PenColor).GetColor());
             }
+        }
+
+        /// <inheritdoc/>
+        public void FillEllipse(Vector2 center, Vector2 radii, Color? penColor = null)
+        {
+            DrawingSession.FillEllipse(center, radii.X, radii.Y, (penColor ?? PenColor).GetColor());
         }
 
         /// <inheritdoc/>
