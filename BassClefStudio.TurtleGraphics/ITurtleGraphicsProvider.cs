@@ -65,6 +65,15 @@ namespace BassClefStudio.TurtleGraphics
         void DrawPolygon(Vector2[] points, Color? penColor = null, float? penSize = null);
 
         /// <summary>
+        /// Draws the outline of an ellipse with the pen.
+        /// </summary>
+        /// <param name="center">The <see cref="Vector2"/> center of the ellipse.</param>
+        /// <param name="radii">A <see cref="Vector2"/> indicating the radius in the x and y directions.</param>
+        /// <param name="penColor">Override the <see cref="PenColor"/> of this stroke.</param>
+        /// <param name="penSize">Override the <see cref="PenSize"/> of this stroke.</param>
+        void DrawEllipse(Vector2 center, Vector2 radii, Color? penColor = null, float? penSize = null);
+
+        /// <summary>
         /// Fills the inside of a polygon with the pen between two or more points.
         /// </summary>
         /// <param name="points">An array of <see cref="Vector2"/> vertices - must be at least 2 in the collection (exactly 2 vertices calls <see cref="DrawLine(Vector2, Vector2, Color?, float?)"/>).</param>
@@ -72,8 +81,110 @@ namespace BassClefStudio.TurtleGraphics
         void FillPolygon(Vector2[] points, Color? penColor = null);
 
         /// <summary>
+        /// Fills the inside of an ellipse with the pen.
+        /// </summary>
+        /// <param name="center">The <see cref="Vector2"/> center of the ellipse.</param>
+        /// <param name="radii">A <see cref="Vector2"/> indicating the radius in the x and y directions.</param>
+        /// <param name="penColor">Override the <see cref="PenColor"/> of this stroke.</param>
+        void FillEllipse(Vector2 center, Vector2 radii, Color? penColor = null);
+
+        /// <summary>
         /// Flushes any unregistered changes to the <see cref="ITurtleGraphicsProvider"/> to the app view or file.
         /// </summary>
         Task FlushAsync();
+    }
+
+    /// <summary>
+    /// Provides extension methods for the <see cref="ITurtleGraphicsProvider"/> class.
+    /// </summary>
+    public static class GraphicsProviderExtensions
+    {
+        /// <summary>
+        /// Draws the outline of a rectangle with the pen given two opposite points.
+        /// </summary>
+        /// <param name="graphics">The <see cref="ITurtleGraphicsProvider"/> drawing the shapes</param>
+        /// <param name="point1">The first corner of the rectangle.</param>
+        /// <param name="point2">An opposite corner of the rectangle.</param>
+        /// <param name="penColor">Override the <see cref="ITurtleGraphicsProvider.PenColor"/> of this stroke.</param>
+        /// <param name="penSize">Override the <see cref="ITurtleGraphicsProvider.PenSize"/> of this stroke.</param>
+        public static void DrawRectangle(this ITurtleGraphicsProvider graphics, Vector2 point1, Vector2 point2, Color? penColor = null, float? penSize = null)
+        {
+            graphics.DrawPolygon(
+                new Vector2[]
+                {
+                    point1,
+                    new Vector2(point1.X, point2.Y),
+                    point2,
+                    new Vector2(point2.X, point1.Y)
+                },
+                penColor,
+                penSize);
+        }
+
+        /// <summary>
+        /// Draws the outline of a rectangle with the pen given a center and size.
+        /// </summary>
+        /// <param name="graphics">The <see cref="ITurtleGraphicsProvider"/> drawing the shapes</param>
+        /// <param name="center">The center point of the rectangle.</param>
+        /// <param name="width">The width (x) of the rectangle.</param>
+        /// <param name="height">The height (y) of the rectangle.</param>
+        /// <param name="penColor">Override the <see cref="ITurtleGraphicsProvider.PenColor"/> of this stroke.</param>
+        /// <param name="penSize">Override the <see cref="ITurtleGraphicsProvider.PenSize"/> of this stroke.</param>
+        public static void DrawRectangle(this ITurtleGraphicsProvider graphics, Vector2 center, float width, float height, Color? penColor = null, float? penSize = null)
+        {
+            Vector2 size = new Vector2(width, height);
+            graphics.DrawPolygon(
+                new Vector2[]
+                {
+                    center + size / 2,
+                    center + size * new Vector2(-1, 1) / 2,
+                    center - size / 2,
+                    center + size * new Vector2(1, -1) / 2
+                },
+                penColor,
+                penSize);
+        }
+
+        /// <summary>
+        /// Draws the outline of a rectangle with the pen given two opposite points.
+        /// </summary>
+        /// <param name="graphics">The <see cref="ITurtleGraphicsProvider"/> drawing the shapes</param>
+        /// <param name="point1">The first corner of the rectangle.</param>
+        /// <param name="point2">An opposite corner of the rectangle.</param>
+        /// <param name="penColor">Override the <see cref="ITurtleGraphicsProvider.PenColor"/> of this stroke.</param>
+        public static void FillRectangle(this ITurtleGraphicsProvider graphics, Vector2 point1, Vector2 point2, Color? penColor = null)
+        {
+            graphics.FillPolygon(
+                new Vector2[]
+                {
+                    point1,
+                    new Vector2(point1.X, point2.Y),
+                    point2,
+                    new Vector2(point2.X, point1.Y)
+                },
+                penColor);
+        }
+
+        /// <summary>
+        /// Draws the outline of a rectangle with the pen given a center and size.
+        /// </summary>
+        /// <param name="graphics">The <see cref="ITurtleGraphicsProvider"/> drawing the shapes</param>
+        /// <param name="center">The center point of the rectangle.</param>
+        /// <param name="width">The width (x) of the rectangle.</param>
+        /// <param name="height">The height (y) of the rectangle.</param>
+        /// <param name="penColor">Override the <see cref="ITurtleGraphicsProvider.PenColor"/> of this stroke.</param>
+        public static void FillRectangle(this ITurtleGraphicsProvider graphics, Vector2 center, float width, float height, Color? penColor = null)
+        {
+            Vector2 size = new Vector2(width, height);
+            graphics.FillPolygon(
+                new Vector2[]
+                {
+                    center + size / 2,
+                    center + size * new Vector2(-1, 1) / 2,
+                    center - size / 2,
+                    center + size * new Vector2(1, -1) / 2
+                },
+                penColor);
+        }
     }
 }

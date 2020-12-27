@@ -121,7 +121,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Win2DTurtleGraphicsCanvas.cs" />
+    <Compile Include="Win2DTurtleGraphicsView.cs" />
     <Compile Include="Win2DTurtleGraphicsProvider.cs" />
     <EmbeddedResource Include="Properties\BassClefStudio.TurtleGraphics.Win2D.rd.xml" />
   </ItemGroup>

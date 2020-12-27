@@ -13,7 +13,7 @@ namespace BassClefStudio.TurtleGraphics.Win2D
     /// <summary>
     /// Represents a Win2D implementation of <see cref="ITurtleGraphicsView"/> that draws to a <see cref="CanvasControl"/>.
     /// </summary>
-    public class Win2DTurtleGraphicsCanvas : ITurtleGraphicsView
+    public class Win2DTurtleGraphicsView : ITurtleGraphicsView
     {
         private bool autoRefresh;
         /// <inheritdoc/>
@@ -24,20 +24,20 @@ namespace BassClefStudio.TurtleGraphics.Win2D
         }
 
         /// <summary>
-        /// Creates a <see cref="Win2DTurtleGraphicsCanvas"/> from a non-animated <see cref="CanvasControl"/>.
+        /// Creates a <see cref="Win2DTurtleGraphicsView"/> from a non-animated <see cref="CanvasControl"/>.
         /// </summary>
         /// <param name="canvas">The <see cref="CanvasControl"/> Win2D canvas to draw on.</param>
-        public Win2DTurtleGraphicsCanvas(CanvasControl canvas)
+        public Win2DTurtleGraphicsView(CanvasControl canvas)
         {
             canvas.Draw += CanvasStaticDrawRequested;
             autoRefresh = false;
         }
 
         /// <summary>
-        /// Creates a <see cref="Win2DTurtleGraphicsCanvas"/> from a non-animated <see cref="CanvasAnimatedControl"/>.
+        /// Creates a <see cref="Win2DTurtleGraphicsView"/> from a non-animated <see cref="CanvasAnimatedControl"/>.
         /// </summary>
         /// <param name="canvas">The <see cref="CanvasAnimatedControl"/> Win2D canvas to draw on.</param>
-        public Win2DTurtleGraphicsCanvas(CanvasAnimatedControl canvas)
+        public Win2DTurtleGraphicsView(CanvasAnimatedControl canvas)
         {
             canvas.Draw += CanvasAnimatedDrawRequested;
             autoRefresh = true;
