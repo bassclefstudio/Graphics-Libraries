@@ -48,18 +48,24 @@ namespace BassClefStudio.TurtleGraphics
         Color PenColor { get; set; }
 
         /// <summary>
+        /// The <see cref="PenType"/> value indicating how line ends should behave.
+        /// </summary>
+        PenType PenType { get; set; }
+
+        /// <summary>
         /// Draws a single line stroke between two points.
         /// </summary>
         /// <param name="start">The <see cref="Vector2"/> start of the line.</param>
         /// <param name="end">The <see cref="Vector2"/> end of the line.</param>
         /// <param name="penColor">Override the <see cref="PenColor"/> of this stroke.</param>
         /// <param name="penSize">Override the <see cref="PenSize"/> of this stroke.</param>
-        void DrawLine(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null);
+        /// <param name="penType">Override the <see cref="PenType"/> of this stroke.</param>
+        void DrawLine(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null, PenType? penType = null);
 
         /// <summary>
         /// Draws the outline of a polygon with the pen between two or more points.
         /// </summary>
-        /// <param name="points">An array of <see cref="Vector2"/> vertices - must be at least 2 in the collection (exactly 2 vertices calls <see cref="DrawLine(Vector2, Vector2, Color?, float?)"/>).</param>
+        /// <param name="points">An array of <see cref="Vector2"/> vertices - must be at least 2 in the collection (exactly 2 vertices calls <see cref="DrawLine(Vector2, Vector2, Color?, float?, PenType?)"/>).</param>
         /// <param name="penColor">Override the <see cref="PenColor"/> of this stroke.</param>
         /// <param name="penSize">Override the <see cref="PenSize"/> of this stroke.</param>
         void DrawPolygon(Vector2[] points, Color? penColor = null, float? penSize = null);
@@ -76,7 +82,7 @@ namespace BassClefStudio.TurtleGraphics
         /// <summary>
         /// Fills the inside of a polygon with the pen between two or more points.
         /// </summary>
-        /// <param name="points">An array of <see cref="Vector2"/> vertices - must be at least 2 in the collection (exactly 2 vertices calls <see cref="DrawLine(Vector2, Vector2, Color?, float?)"/>).</param>
+        /// <param name="points">An array of <see cref="Vector2"/> vertices - must be at least 2 in the collection (exactly 2 vertices calls <see cref="DrawLine(Vector2, Vector2, Color?, float?, PenType?)"/>).</param>
         /// <param name="penColor">Override the <see cref="PenColor"/> of this stroke.</param>
         void FillPolygon(Vector2[] points, Color? penColor = null);
 

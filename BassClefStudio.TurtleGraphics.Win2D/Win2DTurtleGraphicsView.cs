@@ -1,12 +1,6 @@
-﻿using BassClefStudio.NET.Core.Primitives;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.UI.Xaml;
+﻿using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BassClefStudio.TurtleGraphics.Win2D
 {
@@ -50,7 +44,7 @@ namespace BassClefStudio.TurtleGraphics.Win2D
                 UpdateRequested?.Invoke(
                     this,
                     new UpdateRequestEventArgs(
-                        new Vector2((float)canvas.ActualWidth, (float)canvas.ActualHeight),
+                        canvas.Size.ToVector2(),
                         new Win2DTurtleGraphicsProvider(args.DrawingSession)));
             }
             else
@@ -61,15 +55,15 @@ namespace BassClefStudio.TurtleGraphics.Win2D
                            null,
                            new Win2DTurtleGraphicsProvider(args.DrawingSession)));
             }
-        }
+        } 
 
         private void CanvasStaticDrawRequested(CanvasControl sender, CanvasDrawEventArgs args)
         {
             UpdateRequested?.Invoke(
-                this, 
-                new UpdateRequestEventArgs(
-                    new Vector2((float)sender.ActualWidth, (float)sender.ActualHeight),
-                    new Win2DTurtleGraphicsProvider(args.DrawingSession)));
+                    this,
+                    new UpdateRequestEventArgs(
+                        sender.Size.ToVector2(),
+                        new Win2DTurtleGraphicsProvider(args.DrawingSession)));
         }
 
         /// <inheritdoc/>

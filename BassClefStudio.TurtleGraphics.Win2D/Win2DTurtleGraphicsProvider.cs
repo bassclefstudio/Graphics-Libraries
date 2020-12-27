@@ -27,6 +27,9 @@ namespace BassClefStudio.TurtleGraphics.Win2D
         /// <inheritdoc/>
         public Color PenColor { get; set; }
 
+        /// <inheritdoc/>
+        public PenType PenType { get; set; }
+
         /// <summary>
         /// The <see cref="CanvasDrawingSession"/> that this <see cref="Win2DTurtleGraphicsProvider"/> uses to execute drawing commands.
         /// </summary>
@@ -88,9 +91,14 @@ namespace BassClefStudio.TurtleGraphics.Win2D
         }
 
         /// <inheritdoc/>
-        public void DrawLine(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null)
+        public void DrawLine(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null, PenType? penType = null)
         {
             DrawingSession.DrawLine(start, end, (penColor ?? PenColor).GetColor(), (penSize ?? PenSize));
+            if((penType ?? PenType) == PenType.Round)
+            {
+                FillEllipse(start, new Vector2((penSize ?? PenSize) / 2), penColor);
+                FillEllipse(end, new Vector2((penSize ?? PenSize) / 2), penColor);
+            }
         }
 
         /// <inheritdoc/>
