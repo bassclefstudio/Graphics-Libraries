@@ -14,12 +14,6 @@ namespace BassClefStudio.Graphics.Turtle
     public interface ITurtleGraphicsProvider : IGraphicsProvider
     {
         /// <summary>
-        /// Clears the drawing area with a specified <see cref="Color"/>.
-        /// </summary>
-        /// <param name="baseColor">The background color to clear the surface with.</param>
-        void Clear(Color baseColor);
-
-        /// <summary>
         /// The <see cref="float"/> size (diameter, in drawing co-ordinates) of the pen used to draw lines and outlines.
         /// </summary>
         float PenSize { get; set; }

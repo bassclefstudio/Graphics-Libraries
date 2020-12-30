@@ -123,6 +123,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Win2DGraphicsView.cs" />
     <Compile Include="Core\Win2DGraphicsProvider.cs" />
+    <Compile Include="Svg\Win2DSvgDocument.cs" />
     <EmbeddedResource Include="Properties\BassClefStudio.TurtleGraphics.Win2D.rd.xml" />
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Text;
 
 namespace BassClefStudio.Graphics.Svg
@@ -14,7 +15,9 @@ namespace BassClefStudio.Graphics.Svg
         /// <summary>
         /// Draws an SVG vector image onto the associated <see cref="IGraphicsView"/> or file.
         /// </summary>
-        /// <param name="xml">The SVG document as XML text that can be read by the underlying graphics system.</param>
-        void DrawSvg(string xml);
+        /// <param name="svgDocument">The SVG document as a loaded <see cref="ISvgDocument"/> that can be read by the underlying graphics system.</param>
+        /// <param name="size">The <see cref="Vector2"/> size, in drawing-space, of the SVG viewport.</param>
+        /// <param name="location">The <see cref="Vector2"/> location (center-based) of the SVG, in drawing-space.</param>
+        void DrawSvg(ISvgDocument svgDocument, Vector2 size, Vector2 location);
     }
 }

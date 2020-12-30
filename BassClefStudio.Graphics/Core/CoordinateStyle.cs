@@ -15,7 +15,7 @@ namespace BassClefStudio.Graphics.Core
         TopLeft = 0,
 
         /// <summary>
-        /// (0,0) is the center of the view, and the co-ordinate values follow a 2D axis (positive y is up, x is right). Matches most mathematics and some computer graphics.
+        /// (0,0) is the 'center' of the co-ordinate grid, and the co-ordinate values follow a 2D axis (positive y is up, x is right). Matches most mathematics and some computer graphics.
         /// </summary>
         Center = 1
     }

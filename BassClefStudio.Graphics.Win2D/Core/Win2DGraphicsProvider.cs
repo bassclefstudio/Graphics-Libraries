@@ -44,45 +44,21 @@ namespace BassClefStudio.Graphics.Core
         #endregion
         #region SharedGraphics
 
+        private ViewCamera camera = ViewCamera.Identity;
         /// <inheritdoc/>
-        public float Scale { get; private set; } = 1;
+        public ViewCamera Camera { get => camera; set { camera = value; SetTransform(); } }
 
-        /// <inheritdoc/>
-        public Vector2 EffectiveSize { get; private set; }
-
-        /// <inheritdoc/>
-        public void SetView(Vector2 viewSize, Vector2 desiredSize, ZoomType zoomType = ZoomType.FitAll, CoordinateStyle coordinateStyle = CoordinateStyle.TopLeft)
+        private void SetTransform()
         {
-            float xRatio = (viewSize.X / desiredSize.X);
-            float yRatio = (viewSize.Y / desiredSize.Y);
-            if (zoomType == ZoomType.FitAll && xRatio > yRatio
-                || zoomType == ZoomType.FillView && yRatio > xRatio)
-            {
-                Scale = yRatio;
-            }
-            else
-            {
-                Scale = xRatio;
-            }
-
-            EffectiveSize = desiredSize;
-            SetTransform(Scale, EffectiveSize * Scale, viewSize / 2, coordinateStyle);
+            var transform = Matrix3x2.CreateScale(Camera.GetScale());
+            transform.Translation = -Camera.Translation;
+            DrawingSession.Transform = transform;
         }
 
-        private void SetTransform(float scale, Vector2 drawSize, Vector2 centerPoint, CoordinateStyle coordinateStyle)
+        /// <inheritdoc/>
+        public void Clear(Color baseColor)
         {
-            Matrix3x2 transform = Matrix3x2.Identity;
-            if (coordinateStyle == CoordinateStyle.TopLeft)
-            {
-                transform = Matrix3x2.CreateScale(scale, scale);
-                transform.Translation = centerPoint - (drawSize / 2);
-            }
-            else if (coordinateStyle == CoordinateStyle.Center)
-            {
-                transform = Matrix3x2.CreateScale(scale, -scale);
-                transform.Translation = centerPoint;
-            }
-            DrawingSession.Transform = transform;
+            DrawingSession.Clear(baseColor.GetColor());
         }
 
         /// <inheritdoc/>
@@ -95,10 +71,16 @@ namespace BassClefStudio.Graphics.Core
         #region Svg
 
         /// <inheritdoc/>
-        public void DrawSvg(string xml)
+        public void DrawSvg(ISvgDocument svgDocument, Vector2 size, Vector2 location)
         {
-            var svg = CanvasSvgDocument.LoadFromXml(this.DrawingSession, xml);
-            DrawingSession.DrawSvg(svg, EffectiveSize.ToSize());
+            if (svgDocument is Win2DSvgDocument svg)
+            {
+                DrawingSession.DrawSvg(svg.SvgDocument, size.ToSize(), location);
+            }
+            else
+            {
+                throw new ArgumentException($"Cannot read SVG document of type {svgDocument?.GetType().Name}");
+            }
         }
 
         #endregion
@@ -112,12 +94,6 @@ namespace BassClefStudio.Graphics.Core
 
         /// <inheritdoc/>
         public PenType PenType { get; set; }
-
-        /// <inheritdoc/>
-        public void Clear(Color baseColor)
-        {
-            DrawingSession.Clear(baseColor.GetColor());
-        }
 
         /// <inheritdoc/>
         public void DrawLine(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null, PenType? penType = null)
