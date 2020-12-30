@@ -17,6 +17,11 @@ namespace BassClefStudio.Graphics.Core
         /// <summary>
         /// A <see cref="bool"/> indicating whether this <see cref="IGraphicsView"/> should continually refresh its UI. If set to 'false', <see cref="UpdateRequested"/> is only called when the view changes (e.g. its size changes).
         /// </summary>
-        bool IsAutoRefresh { get; set; }
+        bool IsAutoUpdate { get; set; }
+
+        /// <summary>
+        /// Requests that the <see cref="IGraphicsView"/> updates its UI, providing a callback via the <see cref="UpdateRequested"/> event.
+        /// </summary>
+        void RequestUpdate();
     }
 }
