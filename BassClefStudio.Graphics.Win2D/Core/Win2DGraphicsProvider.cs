@@ -44,9 +44,9 @@ namespace BassClefStudio.Graphics.Core
         #endregion
         #region SharedGraphics
 
-        private ICamera camera = ViewCamera.Identity;
+        private ViewCamera camera = ViewCamera.Identity;
         /// <inheritdoc/>
-        public ICamera Camera { get => camera; set { camera = value; } }
+        public ViewCamera Camera { get => camera; set { camera = value; } }
 
         /// <inheritdoc/>
         public void Clear(Color baseColor)
@@ -64,7 +64,7 @@ namespace BassClefStudio.Graphics.Core
         #region Svg
 
         /// <inheritdoc/>
-        public void DrawSvg(ISvgDocument svgDocument, Vector2 size, Vector2 location) => DrawSvgInternal(svgDocument, Camera.Scale * size, Camera.TransformPoint(location));
+        public void DrawSvg(ISvgDocument svgDocument, Vector2 size, Vector2 location) => DrawSvgInternal(svgDocument, Camera.Scale * size, Camera.GetViewPoint(location));
         private void DrawSvgInternal(ISvgDocument svgDocument, Vector2 size, Vector2 location)
         {
             if (svgDocument is Win2DSvgDocument svg)
@@ -91,7 +91,7 @@ namespace BassClefStudio.Graphics.Core
         public PenType PenType { get; set; } = PenType.Round;
 
         /// <inheritdoc/>
-        public void DrawLine(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null, PenType? penType = null) => DrawLineInternal(Camera.TransformPoint(start), Camera.TransformPoint(end), penColor, Camera.Scale * penSize, penType);
+        public void DrawLine(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null, PenType? penType = null) => DrawLineInternal(Camera.GetViewPoint(start), Camera.GetViewPoint(end), penColor, Camera.Scale * penSize, penType);
         private void DrawLineInternal(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null, PenType? penType = null)
         {
             DrawingSession.DrawLine(start, end, (penColor ?? PenColor).GetColor(), (penSize ?? PenSize));
@@ -103,7 +103,7 @@ namespace BassClefStudio.Graphics.Core
         }
 
         /// <inheritdoc/>
-        public void DrawPolygon(Vector2[] points, Color? penColor = null, float? penSize = null) => DrawPolygonInternal(points.Select(p => Camera.TransformPoint(p)).ToArray(), penColor, Camera.Scale * penSize);
+        public void DrawPolygon(Vector2[] points, Color? penColor = null, float? penSize = null) => DrawPolygonInternal(points.Select(p => Camera.GetViewPoint(p)).ToArray(), penColor, Camera.Scale * penSize);
         private void DrawPolygonInternal(Vector2[] points, Color? penColor = null, float? penSize = null)
         {
             if (points.Length <= 1)
@@ -122,14 +122,14 @@ namespace BassClefStudio.Graphics.Core
         }
 
         /// <inheritdoc/>
-        public void DrawEllipse(Vector2 center, Vector2 radii, Color? penColor = null, float? penSize = null) => DrawEllipseInternal(Camera.TransformPoint(center), Camera.Scale * radii, penColor, Camera.Scale * penSize);
+        public void DrawEllipse(Vector2 center, Vector2 radii, Color? penColor = null, float? penSize = null) => DrawEllipseInternal(Camera.GetViewPoint(center), Camera.Scale * radii, penColor, Camera.Scale * penSize);
         private void DrawEllipseInternal(Vector2 center, Vector2 radii, Color? penColor = null, float? penSize = null)
         {
             DrawingSession.DrawEllipse(center, radii.X, radii.Y, (penColor ?? PenColor).GetColor(), (penSize ?? PenSize));
         }
 
         /// <inheritdoc/>
-        public void FillPolygon(Vector2[] points, Color? penColor = null) => FillPolygonInternal(points.Select(p => Camera.TransformPoint(p)).ToArray(), penColor);
+        public void FillPolygon(Vector2[] points, Color? penColor = null) => FillPolygonInternal(points.Select(p => Camera.GetViewPoint(p)).ToArray(), penColor);
         private void FillPolygonInternal(Vector2[] points, Color? penColor = null)
         {
             if (points.Length <= 2)
@@ -144,7 +144,7 @@ namespace BassClefStudio.Graphics.Core
         }
 
         /// <inheritdoc/>
-        public void FillEllipse(Vector2 center, Vector2 radii, Color? penColor = null) => FillEllipseInternal(Camera.TransformPoint(center), Camera.Scale * radii, penColor);
+        public void FillEllipse(Vector2 center, Vector2 radii, Color? penColor = null) => FillEllipseInternal(Camera.GetViewPoint(center), Camera.Scale * radii, penColor);
         public void FillEllipseInternal(Vector2 center, Vector2 radii, Color? penColor = null)
         {
             DrawingSession.FillEllipse(center, radii.X, radii.Y, (penColor ?? PenColor).GetColor());

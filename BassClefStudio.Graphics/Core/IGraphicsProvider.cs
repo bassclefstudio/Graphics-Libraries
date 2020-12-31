@@ -13,9 +13,9 @@ namespace BassClefStudio.Graphics.Core
     public interface IGraphicsProvider
     {
         /// <summary>
-        /// The <see cref="ICamera"/> currently used by this <see cref="IGraphicsProvider"/> to shift between drawing- and view-space.
+        /// The <see cref="ViewCamera"/> currently used by this <see cref="IGraphicsProvider"/> to shift between drawing- and view-space.
         /// </summary>
-        ICamera Camera { get; set; }
+        ViewCamera Camera { get; set; }
 
         /// <summary>
         /// Clears the drawing area with a specified <see cref="Color"/>.
