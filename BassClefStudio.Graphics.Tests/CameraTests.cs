@@ -61,10 +61,10 @@ namespace BassClefStudio.Graphics.Tests
         {
             Vector2 viewSize = new Vector2(100);
             Vector2 drawSize = new Vector2(200);
-            ViewCamera testCam = new ViewCamera(viewSize, drawSize, ZoomType.FitAll);
+            ICamera testCam = new ComplexCamera(viewSize, drawSize, ZoomType.FitAll);
             Assert.AreEqual(0.5, testCam.Scale, "FitAll ViewCamera has incorrect scale to fit draw-space 2x view-space.");
             Vector2 newDrawSize = new Vector2(50, 200);
-            testCam = new ViewCamera(viewSize, newDrawSize, ZoomType.FitAll);
+            testCam = new ComplexCamera(viewSize, newDrawSize, ZoomType.FitAll);
             Assert.AreEqual(0.5, testCam.Scale, "FitAll ViewCamera has incorrect scale to fit rectangular draw-space.");
         }
 
@@ -73,10 +73,10 @@ namespace BassClefStudio.Graphics.Tests
         {
             Vector2 viewSize = new Vector2(100);
             Vector2 drawSize = new Vector2(200);
-            ViewCamera testCam = new ViewCamera(viewSize, drawSize, ZoomType.FillView);
+            ICamera testCam = new ComplexCamera(viewSize, drawSize, ZoomType.FillView);
             Assert.AreEqual(0.5, testCam.Scale, "FillView ViewCamera has incorrect scale to fill draw-space 2x view-space.");
             Vector2 newDrawSize = new Vector2(50, 200);
-            testCam = new ViewCamera(viewSize, newDrawSize, ZoomType.FillView);
+            testCam = new ComplexCamera(viewSize, newDrawSize, ZoomType.FillView);
             Assert.AreEqual(2, testCam.Scale, "FillView ViewCamera has incorrect scale to fill with rectangular draw-space.");
         }
 

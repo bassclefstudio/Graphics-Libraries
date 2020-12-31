@@ -73,51 +73,7 @@ namespace BassClefStudio.Graphics.Core
         }
 
         /// <summary>
-        /// Creates a new <see cref="ViewCamera"/> to zoom (see <see cref="GetZoomFactor(Vector2, Vector2, ZoomType)"/>) between a given drawing- and view-space.
-        /// </summary>
-        /// <param name="viewSpace">The size of the view-space, as a <see cref="Vector2"/>.</param>
-        /// <param name="drawSpace">The size of the drawing-space, as a <see cref="Vector2"/>.</param>
-        /// <param name="zoomType">A <see cref="ZoomType"/> value indicating the behavior of the zooming.</param>
-        /// <param name="flipVertical">A <see cref="bool"/> value indicating that the origin and co-ordinate axes are math-style (y-axis pointing upwards), rather than computer-style (top-left, with y-axis downwards).</param>
-        public ViewCamera(Vector2 viewSpace, Vector2 drawSpace, ZoomType zoomType = ZoomType.FitAll, bool flipVertical = false)
-        {
-            Scale = GetZoomFactor(viewSpace, drawSpace, zoomType);
-            FlipVertical = flipVertical;
-            Vector2 centerPoint = viewSpace / 2;
-            if (FlipVertical)
-            {
-                Translation = -centerPoint;
-            }
-            else
-            {
-                Translation = (drawSpace / 2) - centerPoint;
-            }
-        }
-
-        /// <summary>
-        /// Returns the <see cref="float"/> scale-factor required to scale the <paramref name="drawSpace"/> into the <paramref name="viewSpace"/> with the desired zoom behavior.
-        /// </summary>
-        /// <param name="viewSpace">The size of the view-space, as a <see cref="Vector2"/>.</param>
-        /// <param name="drawSpace">The size of the drawing-space, as a <see cref="Vector2"/>.</param>
-        /// <param name="zoomType">A <see cref="ZoomType"/> value indicating the behavior of the zooming.</param>
-        /// <returns>The <see cref="float"/> scale factor a <see cref="ViewCamera"/> would need to scale between these spaces.</returns>
-        public static float GetZoomFactor(Vector2 viewSpace, Vector2 drawSpace, ZoomType zoomType = ZoomType.FitAll)
-        {
-            float xRatio = (viewSpace.X / drawSpace.X);
-            float yRatio = (viewSpace.Y / drawSpace.Y);
-            if (zoomType == ZoomType.FitAll && xRatio > yRatio
-                || zoomType == ZoomType.FillView && yRatio > xRatio)
-            {
-                return yRatio;
-            }
-            else
-            {
-                return xRatio;
-            }
-        }
-
-        /// <summary>
-        /// Gets an (x,y) scale <see cref="Vector2"/> from this <see cref="ViewCamera"/>'s <see cref="Scale"/> and <see cref="OriginType"/>.
+        /// Gets an (x,y) scale <see cref="Vector2"/> from this <see cref="ViewCamera"/>'s <see cref="Scale"/> and the <see cref="FlipVertical"/> property.
         /// </summary>
         /// <returns>A <see cref="Vector2"/> scale factor.</returns>
         public Vector2 GetScale()
@@ -165,10 +121,8 @@ namespace BassClefStudio.Graphics.Core
         /// Creates a new <see cref="ComplexCamera"/>.
         /// </summary>
         /// <param name="childCams">An array of child <see cref="ICamera"/> transformations, in the order they will be applied.</param>
-        public ComplexCamera(params ICamera[] childCams)
-        {
-            ChildCams = childCams;
-        }
+        public ComplexCamera(params ICamera[] childCams) : this(childCams as IEnumerable<ICamera>)
+        { }
 
         /// <inheritdoc/>
         public Vector2 TransformPoint(Vector2 drawPoint)
@@ -179,6 +133,39 @@ namespace BassClefStudio.Graphics.Core
                 currentPt = cam.TransformPoint(currentPt);
             }
             return currentPt;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Complex"/> to zoom (see <see cref="GetZoomFactor(Vector2, Vector2, ZoomType)"/>) between a given drawing- and view-space. If <paramref name="flipVertical"/> is 'true', this also provides the math-style translation to place the origin in the center of the screen.
+        /// </summary>
+        /// <param name="viewSpace">The size of the view-space, as a <see cref="Vector2"/>.</param>
+        /// <param name="drawSpace">The size of the drawing-space, as a <see cref="Vector2"/>.</param>
+        /// <param name="zoomType">A <see cref="ZoomType"/> value indicating the behavior of the zooming.</param>
+        /// <param name="flipVertical">A <see cref="bool"/> value indicating that the origin and co-ordinate axes are math-style (y-axis pointing upwards), rather than computer-style (top-left, with y-axis downwards).</param>
+        public ComplexCamera(Vector2 viewSpace, Vector2 drawSpace, ZoomType zoomType = ZoomType.FitAll, bool flipVertical = false)
+            : this(new ViewCamera(GetZoomFactor(viewSpace, drawSpace, zoomType), Vector2.Zero), new ViewCamera(1, -viewSpace / 2, flipVertical))
+        { }
+
+        /// <summary>
+        /// Returns the <see cref="float"/> scale-factor required to scale the <paramref name="drawSpace"/> into the <paramref name="viewSpace"/> with the desired zoom behavior.
+        /// </summary>
+        /// <param name="viewSpace">The size of the view-space, as a <see cref="Vector2"/>.</param>
+        /// <param name="drawSpace">The size of the drawing-space, as a <see cref="Vector2"/>.</param>
+        /// <param name="zoomType">A <see cref="ZoomType"/> value indicating the behavior of the zooming.</param>
+        /// <returns>The <see cref="float"/> scale factor a <see cref="ViewCamera"/> would need to scale between these spaces.</returns>
+        public static float GetZoomFactor(Vector2 viewSpace, Vector2 drawSpace, ZoomType zoomType = ZoomType.FitAll)
+        {
+            float xRatio = (viewSpace.X / drawSpace.X);
+            float yRatio = (viewSpace.Y / drawSpace.Y);
+            if (zoomType == ZoomType.FitAll && xRatio > yRatio
+                || zoomType == ZoomType.FillView && yRatio > xRatio)
+            {
+                return yRatio;
+            }
+            else
+            {
+                return xRatio;
+            }
         }
     }
 }
