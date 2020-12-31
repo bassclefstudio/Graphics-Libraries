@@ -80,14 +80,15 @@ namespace BassClefStudio.Graphics.Core
         #endregion
         #region Turtle
 
+        private float penSize;
         /// <inheritdoc/>
-        public float PenSize { get; set; }
+        public float PenSize { get => penSize * Camera.Scale; set => penSize = value; }
 
         /// <inheritdoc/>
-        public Color PenColor { get; set; }
+        public Color PenColor { get; set; } = new Color(255, 255, 255);
 
         /// <inheritdoc/>
-        public PenType PenType { get; set; }
+        public PenType PenType { get; set; } = PenType.Round;
 
         /// <inheritdoc/>
         public void DrawLine(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null, PenType? penType = null) => DrawLineInternal(Camera.TransformPoint(start), Camera.TransformPoint(end), penColor, Camera.Scale * penSize, penType);
