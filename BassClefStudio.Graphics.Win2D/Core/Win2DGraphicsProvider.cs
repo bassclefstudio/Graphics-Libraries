@@ -44,16 +44,9 @@ namespace BassClefStudio.Graphics.Core
         #endregion
         #region SharedGraphics
 
-        private ViewCamera camera = ViewCamera.Identity;
+        private ICamera camera = ViewCamera.Identity;
         /// <inheritdoc/>
-        public ViewCamera Camera { get => camera; set { camera = value; SetTransform(); } }
-
-        private void SetTransform()
-        {
-            var transform = Matrix3x2.CreateScale(Camera.GetScale());
-            transform.Translation = -Camera.Translation;
-            DrawingSession.Transform = transform;
-        }
+        public ICamera Camera { get => camera; set { camera = value; } }
 
         /// <inheritdoc/>
         public void Clear(Color baseColor)
@@ -71,7 +64,8 @@ namespace BassClefStudio.Graphics.Core
         #region Svg
 
         /// <inheritdoc/>
-        public void DrawSvg(ISvgDocument svgDocument, Vector2 size, Vector2 location)
+        public void DrawSvg(ISvgDocument svgDocument, Vector2 size, Vector2 location) => DrawSvgInternal(svgDocument, Camera.Scale * size, Camera.TransformPoint(location));
+        private void DrawSvgInternal(ISvgDocument svgDocument, Vector2 size, Vector2 location)
         {
             if (svgDocument is Win2DSvgDocument svg)
             {
@@ -96,18 +90,20 @@ namespace BassClefStudio.Graphics.Core
         public PenType PenType { get; set; }
 
         /// <inheritdoc/>
-        public void DrawLine(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null, PenType? penType = null)
+        public void DrawLine(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null, PenType? penType = null) => DrawLineInternal(Camera.TransformPoint(start), Camera.TransformPoint(end), penColor, Camera.Scale * penSize, penType);
+        private void DrawLineInternal(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null, PenType? penType = null)
         {
             DrawingSession.DrawLine(start, end, (penColor ?? PenColor).GetColor(), (penSize ?? PenSize));
             if ((penType ?? PenType) == PenType.Round)
             {
-                FillEllipse(start, new Vector2((penSize ?? PenSize) / 2), penColor);
-                FillEllipse(end, new Vector2((penSize ?? PenSize) / 2), penColor);
+                FillEllipseInternal(start, new Vector2((penSize ?? PenSize) / 2), penColor);
+                FillEllipseInternal(end, new Vector2((penSize ?? PenSize) / 2), penColor);
             }
         }
 
         /// <inheritdoc/>
-        public void DrawPolygon(Vector2[] points, Color? penColor = null, float? penSize = null)
+        public void DrawPolygon(Vector2[] points, Color? penColor = null, float? penSize = null) => DrawPolygonInternal(points.Select(p => Camera.TransformPoint(p)).ToArray(), penColor, Camera.Scale * penSize);
+        private void DrawPolygonInternal(Vector2[] points, Color? penColor = null, float? penSize = null)
         {
             if (points.Length <= 1)
             {
@@ -115,7 +111,7 @@ namespace BassClefStudio.Graphics.Core
             }
             else if (points.Length == 2)
             {
-                DrawLine(points[0], points[1], penColor, penSize);
+                DrawLineInternal(points[0], points[1], penColor, penSize);
             }
             else
             {
@@ -125,13 +121,15 @@ namespace BassClefStudio.Graphics.Core
         }
 
         /// <inheritdoc/>
-        public void DrawEllipse(Vector2 center, Vector2 radii, Color? penColor = null, float? penSize = null)
+        public void DrawEllipse(Vector2 center, Vector2 radii, Color? penColor = null, float? penSize = null) => DrawEllipseInternal(Camera.TransformPoint(center), Camera.Scale * radii, penColor, Camera.Scale * penSize);
+        private void DrawEllipseInternal(Vector2 center, Vector2 radii, Color? penColor = null, float? penSize = null)
         {
-            DrawingSession.DrawEllipse(center, radii.X, radii.Y, (penColor ?? PenColor).GetColor());
+            DrawingSession.DrawEllipse(center, radii.X, radii.Y, (penColor ?? PenColor).GetColor(), (penSize ?? PenSize));
         }
 
         /// <inheritdoc/>
-        public void FillPolygon(Vector2[] points, Color? penColor = null)
+        public void FillPolygon(Vector2[] points, Color? penColor = null) => FillPolygonInternal(points.Select(p => Camera.TransformPoint(p)).ToArray(), penColor);
+        private void FillPolygonInternal(Vector2[] points, Color? penColor = null)
         {
             if (points.Length <= 2)
             {
@@ -145,7 +143,8 @@ namespace BassClefStudio.Graphics.Core
         }
 
         /// <inheritdoc/>
-        public void FillEllipse(Vector2 center, Vector2 radii, Color? penColor = null)
+        public void FillEllipse(Vector2 center, Vector2 radii, Color? penColor = null) => FillEllipseInternal(Camera.TransformPoint(center), Camera.Scale * radii, penColor);
+        public void FillEllipseInternal(Vector2 center, Vector2 radii, Color? penColor = null)
         {
             DrawingSession.FillEllipse(center, radii.X, radii.Y, (penColor ?? PenColor).GetColor());
         }
