@@ -92,15 +92,15 @@ namespace BassClefStudio.Graphics.Core
             {
                 Transforms = new ITransform[]
                 {
-                    new Scaling(GetZoomFactor(viewSpace, drawSpace, zoomType))
+                    new Translation(viewSpace / 2),
+                    new Scaling(GetZoomFactor(viewSpace, drawSpace, zoomType), viewSpace / 2, true)
                 };
             }
             else
             {
                 Transforms = new ITransform[]
                 {
-                    new Translation(viewSpace / 2),
-                    new Scaling(GetZoomFactor(viewSpace, drawSpace, zoomType), viewSpace / 2, isCentered),
+                    new Scaling(GetZoomFactor(viewSpace, drawSpace, zoomType))
                 };
             }
         }
