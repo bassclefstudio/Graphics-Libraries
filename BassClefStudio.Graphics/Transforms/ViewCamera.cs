@@ -1,10 +1,11 @@
-﻿using System;
+﻿using BassClefStudio.Graphics.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 
-namespace BassClefStudio.Graphics.Core
+namespace BassClefStudio.Graphics.Transforms
 {
     /// <summary>
     /// Represents a means of transforming graphics co-ordinates into view-coordinates while drawing to an <see cref="IGraphicsProvider"/>.
@@ -108,13 +109,32 @@ namespace BassClefStudio.Graphics.Core
         #endregion
         #region GetPoints
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets the appropriate point in the view-space for the specified graphics/input point.
+        /// </summary>
+        /// <param name="drawPoint">The <see cref="Vector2"/> point in drawing-space.</param>
+        /// <returns>A <see cref="Vector2"/> in the appropriate view-space.</returns>
         public Vector2 GetViewPoint(Vector2 drawPoint)
         {
             Vector2 currentPt = drawPoint;
             foreach (var t in Transforms)
             {
                 currentPt = t.TransformPoint(currentPt);
+            }
+            return currentPt;
+        }
+
+        /// <summary>
+        /// Gets the appropriate point in the drawing-space for the specified view-space point.
+        /// </summary>
+        /// <param name="viewPoint">A point recorded from the view-space.</param>
+        /// <returns>A <see cref="Vector2"/> drawing-space point that would be transformed into that view-space input.</returns>
+        public Vector2 GetGraphicsPoint(Vector2 viewPoint)
+        {
+            Vector2 currentPt = viewPoint;
+            foreach (var t in Transforms.Reverse())
+            {
+                currentPt = t.RetreivePoint(currentPt);
             }
             return currentPt;
         }

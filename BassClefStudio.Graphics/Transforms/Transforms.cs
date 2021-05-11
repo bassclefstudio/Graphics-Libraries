@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace BassClefStudio.Graphics.Core
+namespace BassClefStudio.Graphics.Transforms
 {
     /// <summary>
     /// A transform to graphical elements represents a way to transform <see cref="Vector2"/> co-ordinates from one space to another, as well as a scaling factor for static UI elements or shapes.
@@ -16,6 +16,13 @@ namespace BassClefStudio.Graphics.Core
         /// <param name="drawPoint">The point in drawing (graphics) space.</param>
         /// <returns>The point relative to the view.</returns>
         Vector2 TransformPoint(Vector2 drawPoint);
+
+        /// <summary>
+        /// Transforms a <see cref="Vector2"/> found in view-space to a <see cref="Vector2"/> representing the place in drawing-space this represents using this <see cref="ViewCamera"/>. This is the inverse of <see cref="TransformPoint(Vector2)"/>.
+        /// </summary>
+        /// <param name="viewPoint">The point in view-space.</param>
+        /// <returns>The point relative to the drawing-space.</returns>
+        Vector2 RetreivePoint(Vector2 viewPoint);
 
         /// <summary>
         /// Gets a <see cref="float"/> representing the ratio of the scale in drawing-space to view-space (for UI elements, stroke widths, etc.).
@@ -50,6 +57,12 @@ namespace BassClefStudio.Graphics.Core
         public Vector2 TransformPoint(Vector2 drawPoint)
         {
             return drawPoint + Amount;
+        }
+
+        /// <inheritdoc/>
+        public Vector2 RetreivePoint(Vector2 viewPoint)
+        {
+            return viewPoint - Amount;
         }
     }
 
@@ -106,11 +119,24 @@ namespace BassClefStudio.Graphics.Core
         {
             if (FlipVertical)
             {
-                return ((drawPoint - Center) * new Vector2(Scale) * FlipConstant) + Center;
+                return ((drawPoint - Center) * (new Vector2(Scale) * FlipConstant)) + Center;
             }
             else
             {
                 return ((drawPoint - Center) * new Vector2(Scale)) + Center;
+            }
+        }
+
+        /// <inheritdoc/>
+        public Vector2 RetreivePoint(Vector2 viewPoint)
+        {
+            if (FlipVertical)
+            {
+                return ((viewPoint - Center) / (new Vector2(Scale) * FlipConstant)) + Center;
+            }
+            else
+            {
+                return ((viewPoint - Center) / new Vector2(Scale)) + Center;
             }
         }
     }

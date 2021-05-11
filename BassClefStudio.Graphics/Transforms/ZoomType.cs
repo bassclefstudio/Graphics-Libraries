@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BassClefStudio.Graphics.Core
+namespace BassClefStudio.Graphics.Transforms
 {
     /// <summary>
     /// An enum representing the behavior that should be taken when scaling a screen or control's drawing area.

@@ -1,5 +1,6 @@
 ﻿using BassClefStudio.Graphics.Core;
 using BassClefStudio.Graphics.Svg;
+using BassClefStudio.Graphics.Transforms;
 using BassClefStudio.Graphics.Turtle;
 using BassClefStudio.NET.Core.Primitives;
 using Microsoft.Graphics.Canvas;
