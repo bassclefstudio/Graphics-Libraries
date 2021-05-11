@@ -8,15 +8,15 @@ namespace BassClefStudio.Graphics.Input.Basic
     /// <summary>
     /// An <see cref="IInput"/> detected from the primary input device, such as a single finger touch, mouse, or stylus.
     /// </summary>
-    public struct PointerInput : ISpatialInput
+    public class PointerInput : ISpatialInput
     {
         /// <inheritdoc/>
-        public Vector2 Point { get; set; }
+        public Vector2 Point { get; }
 
         /// <summary>
         /// A <see cref="PointerBehaviour"/> value indicating the types of behaviour associated with this <see cref="PointerInput"/>.
         /// </summary>
-        public PointerBehaviour Behaviour { get; set; }
+        public PointerBehaviour Behaviour { get; }
 
         /// <summary>
         /// Creates a new <see cref="PointerInput"/>.
