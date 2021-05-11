@@ -58,15 +58,16 @@ namespace BassClefStudio.Graphics.Input
         }
 
         /// <summary>
-        /// Creates an <see cref="IStream{T}"/> that detects any press-release <see cref="PointerInput"/> combination and emits the released <see cref="PointerInput"/> value.
+        /// Creates an <see cref="IStream{T}"/> that detects any <see cref="PointerInput"/>s of the given <see cref="PointerBehaviour"/>.
         /// </summary>
         /// <param name="watcher">The <see cref="IInputWatcher"/> detecting user input.</param>
-        public static IStream<PointerInput> GetClickStream(this IInputWatcher watcher)
+        /// <param name="behaviour">The <see cref="PointerBehaviour"/> to listen for.</param>
+        public static IStream<PointerInput> GetClickStream(this IInputWatcher watcher, PointerBehaviour behaviour)
         {
             return watcher.InputStream
                 .Where(i => i is PointerInput)
                 .Cast<IInput, PointerInput>()
-                .Distinct((p1, p2) => p1.Behaviour != PointerBehaviour.Release && p2.Behaviour == PointerBehaviour.Release);
+                .Where(p => p.Behaviour == behaviour);
         }
 
         /// <summary>
