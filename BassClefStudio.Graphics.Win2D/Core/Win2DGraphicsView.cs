@@ -1,5 +1,9 @@
 ﻿using BassClefStudio.Graphics.Core;
+using BassClefStudio.Graphics.Input;
+using BassClefStudio.Graphics.Input.Basic;
 using BassClefStudio.Graphics.Svg;
+using BassClefStudio.Graphics.Transforms;
+using BassClefStudio.NET.Core.Streams;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -14,7 +18,7 @@ namespace BassClefStudio.Graphics.Core
     /// <summary>
     /// Represents a Win2D implementation of <see cref="IGraphicsView"/> that draws to a <see cref="CanvasControl"/>.
     /// </summary>
-    public class Win2DGraphicsView : IGraphicsView, ISvgManager
+    public class Win2DGraphicsView : IGraphicsView, ISvgManager, IInputWatcher
     {
         #region Win2D
 
@@ -29,6 +33,7 @@ namespace BassClefStudio.Graphics.Core
             canvasElement = canvas;
             canvas.Draw += CanvasStaticDrawRequested;
             autoUpdate = false;
+            InitInputs();
         }
 
         private void CanvasStaticDrawRequested(CanvasControl sender, CanvasDrawEventArgs args)
@@ -49,6 +54,7 @@ namespace BassClefStudio.Graphics.Core
             canvasElement = canvas;
             canvas.RegionsInvalidated += CanvasVirtualDrawRequested;
             autoUpdate = false;
+            InitInputs();
         }
 
         private void CanvasVirtualDrawRequested(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs args)
@@ -64,7 +70,7 @@ namespace BassClefStudio.Graphics.Core
         }
 
         /// <summary>
-        /// Creates a <see cref="Win2DGraphicsView"/> from a non-animated <see cref="CanvasAnimatedControl"/>.
+        /// Creates a <see cref="Win2DGraphicsView"/> from an animated <see cref="CanvasAnimatedControl"/>.
         /// </summary>
         /// <param name="canvas">The <see cref="CanvasAnimatedControl"/> Win2D canvas to draw on.</param>
         public Win2DGraphicsView(CanvasAnimatedControl canvas)
@@ -72,6 +78,7 @@ namespace BassClefStudio.Graphics.Core
             canvasElement = canvas;
             canvas.Draw += CanvasAnimatedDrawRequested;
             autoUpdate = true;
+            InitInputs();
         }
 
         private void CanvasAnimatedDrawRequested(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
@@ -132,16 +139,95 @@ namespace BassClefStudio.Graphics.Core
         #endregion
         #region Svg
 
+        /// <inheritdoc/>
         public async Task<ISvgDocument> LoadAsync(Stream fileStream)
         {
             CanvasSvgDocument svgDocument = await CanvasSvgDocument.LoadAsync((canvasElement as ICanvasResourceCreator), fileStream.AsRandomAccessStream());
             return new Win2DSvgDocument(svgDocument);
         }
 
+        /// <inheritdoc/>
         public ISvgDocument Load(string xml)
         {
             CanvasSvgDocument svgDocument = CanvasSvgDocument.LoadFromXml((canvasElement as ICanvasResourceCreator), xml);
             return new Win2DSvgDocument(svgDocument);
+        }
+
+        #endregion
+        #region Input
+
+        /// <inheritdoc/>
+        public ViewCamera Camera { get; set; }
+
+        /// <inheritdoc/>
+        public bool InputEnabled { get; private set; }
+
+        private SourceStream<IInput> inputStream;
+        /// <inheritdoc/>
+        public IStream<IInput> InputStream => inputStream;
+
+        private void InitInputs()
+        {
+            canvasElement.PointerEntered += PointerMoved;
+            canvasElement.PointerMoved += PointerMoved;
+            canvasElement.PointerPressed += PointerPressed;
+            canvasElement.PointerReleased += PointerReleased;
+            inputStream = new SourceStream<IInput>();
+            inputStream.Start();
+        }
+
+        private void PointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            if (InputEnabled)
+            {
+                var pt = e.GetCurrentPoint(canvasElement);
+                Vector2 position = new Vector2((float)pt.Position.X, (float)pt.Position.Y);
+                inputStream.EmitValue(new PointerInput(position, PointerBehaviour.Release));
+                e.Handled = true;
+            }
+        }
+
+        private void PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            if (InputEnabled)
+            {
+                var pt = e.GetCurrentPoint(canvasElement);
+                Vector2 position = new Vector2((float)pt.Position.X, (float)pt.Position.Y);
+                PointerBehaviour behaviour = PointerBehaviour.Hover;
+                if(pt.Properties.IsLeftButtonPressed)
+                {
+                    behaviour = PointerBehaviour.Press;
+                }
+                else if (pt.Properties.IsRightButtonPressed)
+                {
+                    behaviour = PointerBehaviour.PressSecondary;
+                }
+                inputStream.EmitValue(new PointerInput(position, behaviour));
+                e.Handled = true;
+            }
+        }
+
+        private void PointerMoved(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            if (InputEnabled)
+            {
+                var pt = e.GetCurrentPoint(canvasElement);
+                Vector2 position = new Vector2((float)pt.Position.X, (float)pt.Position.Y);
+                inputStream.EmitValue(new PointerInput(Camera.GetGraphicsPoint(position), PointerBehaviour.Hover));
+                e.Handled = true;
+            }
+        }
+
+        /// <inheritdoc/>
+        public void StartInput()
+        {
+            InputEnabled = true;
+        }
+
+        /// <inheritdoc/>
+        public void StopInput()
+        {
+            InputEnabled = false;
         }
 
         #endregion

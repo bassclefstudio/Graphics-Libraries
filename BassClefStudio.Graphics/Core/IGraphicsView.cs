@@ -5,7 +5,7 @@ using System.Text;
 namespace BassClefStudio.Graphics.Core
 {
     /// <summary>
-    /// Represents a control that is providing turtle-graphics content to a view.
+    /// Represents a view in an app that can display <see cref="IGraphicsProvider"/> graphics content.
     /// </summary>
     public interface IGraphicsView
     {

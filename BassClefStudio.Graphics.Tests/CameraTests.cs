@@ -1,4 +1,5 @@
 ﻿using BassClefStudio.Graphics.Core;
+using BassClefStudio.Graphics.Transforms;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace BassClefStudio.Graphics.Tests
             ViewCamera testCam = ViewCamera.Identity;
             var testPt = new Vector2(100, -400);
             Assert.AreEqual(testPt, testCam.GetViewPoint(testPt), "The ViewCamera.Identity camera failed to correctly transform the test point.");
+            Assert.AreEqual(testPt, testCam.GetGraphicsPoint(testCam.GetViewPoint(testPt)), "The ViewCamera did not correctly reverse the transformations applied to the drawing-space.");
         }
 
         [TestMethod]
@@ -26,6 +28,7 @@ namespace BassClefStudio.Graphics.Tests
             ViewCamera testCam = ViewCamera.IdentityFlip;
             var testPt = new Vector2(100, -400);
             Assert.AreEqual(Scaling.FlipConstant * testPt, testCam.GetViewPoint(testPt), "The ViewCamera.IdentityCenter camera failed to correctly transform the test point.");
+            Assert.AreEqual(testPt, testCam.GetGraphicsPoint(testCam.GetViewPoint(testPt)), "The ViewCamera did not correctly reverse the transformations applied to the drawing-space.");
         }
 
         [TestMethod]
@@ -35,6 +38,7 @@ namespace BassClefStudio.Graphics.Tests
             ViewCamera testCam = new ViewCamera(scale, Vector2.Zero);
             var testPt = new Vector2(100, -400);
             Assert.AreEqual(scale * testPt, testCam.GetViewPoint(testPt), "The 2x ViewCamera camera failed to correctly transform the test point.");
+            Assert.AreEqual(testPt, testCam.GetGraphicsPoint(testCam.GetViewPoint(testPt)), "The ViewCamera did not correctly reverse the transformations applied to the drawing-space.");
         }
 
         [TestMethod]
@@ -44,6 +48,7 @@ namespace BassClefStudio.Graphics.Tests
             ViewCamera testCam = new ViewCamera(1, translate);
             var testPt = new Vector2(100, -400);
             Assert.AreEqual(testPt - translate, testCam.GetViewPoint(testPt), "The translate ViewCamera camera failed to correctly transform the test point.");
+            Assert.AreEqual(testPt, testCam.GetGraphicsPoint(testCam.GetViewPoint(testPt)), "The ViewCamera did not correctly reverse the transformations applied to the drawing-space.");
         }
 
         [TestMethod]
@@ -54,6 +59,7 @@ namespace BassClefStudio.Graphics.Tests
             ViewCamera testCam = new ViewCamera(scale, translate);
             var testPt = new Vector2(100, -400);
             Assert.AreEqual((testPt - translate) * scale, testCam.GetViewPoint(testPt), "The translate/2x ViewCamera camera failed to correctly transform the test point.");
+            Assert.AreEqual(testPt, testCam.GetGraphicsPoint(testCam.GetViewPoint(testPt)), "The ViewCamera did not correctly reverse the transformations applied to the drawing-space.");
         }
 
         [TestMethod]
@@ -93,6 +99,8 @@ namespace BassClefStudio.Graphics.Tests
 
             Vector2 manualCombine = (((testPt - translation[0]) * scaling[0]) - translation[1]) * scaling[1];
             Assert.AreEqual(manualCombine, testCam.GetViewPoint(testPt), "The combined ViewCamera camera failed to correctly transform the test point.");
+            Assert.AreEqual(testPt, testCam.GetGraphicsPoint(testCam.GetViewPoint(testPt)), "The combined ViewCamera did not correctly reverse the transformations applied to the drawing-space.");
+
         }
 
         [TestMethod]
@@ -108,6 +116,7 @@ namespace BassClefStudio.Graphics.Tests
 
             Vector2 manualCombine = (((testPt - translation[0]) * scaling[0] * Scaling.FlipConstant) - translation[1]) * scaling[1];
             Assert.AreEqual(manualCombine, testCam.GetViewPoint(testPt), "The combined ViewCamera camera failed to correctly transform the centered test point.");
+            Assert.AreEqual(testPt, testCam.GetGraphicsPoint(testCam.GetViewPoint(testPt)), "The combined ViewCamera did not correctly reverse the transformations applied to the drawing-space.");
         }
     }
 }
