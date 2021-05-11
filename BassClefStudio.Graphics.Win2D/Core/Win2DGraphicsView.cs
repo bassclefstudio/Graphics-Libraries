@@ -182,7 +182,7 @@ namespace BassClefStudio.Graphics.Core
             {
                 var pt = e.GetCurrentPoint(canvasElement);
                 Vector2 position = new Vector2((float)pt.Position.X, (float)pt.Position.Y);
-                inputStream.EmitValue(new PointerInput(position, PointerBehaviour.Release));
+                inputStream.EmitValue(new PointerInput(Camera.GetGraphicsPoint(position), PointerBehaviour.Release));
                 e.Handled = true;
             }
         }
@@ -202,7 +202,7 @@ namespace BassClefStudio.Graphics.Core
                 {
                     behaviour = PointerBehaviour.PressSecondary;
                 }
-                inputStream.EmitValue(new PointerInput(position, behaviour));
+                inputStream.EmitValue(new PointerInput(Camera.GetGraphicsPoint(position), behaviour));
                 e.Handled = true;
             }
         }
