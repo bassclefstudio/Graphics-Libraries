@@ -52,8 +52,7 @@ namespace BassClefStudio.Graphics.Input
         public static IStream<KeyboardInput> GetKeyStream(this IInputWatcher watcher, KeyType key)
         {
             return watcher.InputStream
-                .Where(i => i is KeyboardInput)
-                .Cast<IInput, KeyboardInput>()
+                .OfType<IInput, KeyboardInput>()
                 .Where(k => k.Key == key);
         }
 
@@ -65,8 +64,7 @@ namespace BassClefStudio.Graphics.Input
         public static IStream<PointerInput> GetClickStream(this IInputWatcher watcher, PointerBehaviour behaviour)
         {
             return watcher.InputStream
-                .Where(i => i is PointerInput)
-                .Cast<IInput, PointerInput>()
+                .OfType<IInput, PointerInput>()
                 .Where(p => p.Behaviour == behaviour);
         }
 

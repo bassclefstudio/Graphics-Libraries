@@ -8,15 +8,15 @@ namespace BassClefStudio.Graphics.Input.Basic
     /// <summary>
     /// An <see cref="IInput"/> detected from the keyboard (virtual or physical), containing information about the key that was pressed.
     /// </summary>
-    public struct KeyboardInput : IBinaryInput
+    public class KeyboardInput : IBinaryInput
     {
         /// <inheritdoc/>
-        public bool IsPressed { get; set; }
+        public bool IsPressed { get; }
 
         /// <summary>
         /// A <see cref="KeyType"/> enum containing information about the key that was pressed or released.
         /// </summary>
-        public KeyType Key { get; set; }
+        public KeyType Key { get; }
 
         /// <summary>
         /// Creates a new <see cref="KeyboardInput"/>.
