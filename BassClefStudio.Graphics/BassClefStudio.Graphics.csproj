@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>BassClefStudio</Authors>
-    <Version>1.4.0</Version>
+    <Version>1.4.1</Version>
     <Description>A base library for managing cross-platform systems for drawing vector and turtle graphics, implemented in .NET Standard.</Description>
     <PackageProjectUrl>https://github.com/bassclefstudio/Graphics-Libraries</PackageProjectUrl>
     <RepositoryUrl>https://github.com/bassclefstudio/Graphics-Libraries.git</RepositoryUrl>
