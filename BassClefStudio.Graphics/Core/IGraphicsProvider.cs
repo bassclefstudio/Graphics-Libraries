@@ -11,7 +11,7 @@ namespace BassClefStudio.Graphics.Core
     /// <summary>
     /// Represents a drawable surface (either on an app <see cref="IGraphicsView"/>, or in a file) on which graphics commands can be executed.
     /// </summary>
-    public interface IGraphicsProvider
+    public interface IGraphicsProvider : IDisposable
     {
         /// <summary>
         /// The <see cref="ViewCamera"/> currently used by this <see cref="IGraphicsProvider"/> to shift between drawing- and view-space.
