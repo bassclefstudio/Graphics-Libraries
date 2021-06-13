@@ -3,9 +3,7 @@ using BassClefStudio.Graphics.Svg;
 using BassClefStudio.Graphics.Transforms;
 using BassClefStudio.Graphics.Turtle;
 using BassClefStudio.NET.Core.Primitives;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.Graphics.Canvas.Svg;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,27 +17,43 @@ namespace BassClefStudio.Graphics.Core
     /// <summary>
     /// Represents a Win2D implementation of <see cref="IGraphicsProvider"/> that draws to a <see cref="CanvasDrawingSession"/>.
     /// </summary>
-    public class Win2DGraphicsProvider : ITurtleGraphicsProvider, ISvgGraphicsProvider
+    public class SkiaGraphicsProvider : ITurtleGraphicsProvider, ISvgGraphicsProvider
     {
-        #region Win2D
+        #region SkiaSharp
 
         /// <summary>
-        /// The <see cref="CanvasDrawingSession"/> that this <see cref="Win2DGraphicsProvider"/> uses to execute drawing commands.
+        /// The <see cref="SKCanvas"/> that this <see cref="SkiaGraphicsProvider"/> uses to execute drawing commands.
         /// </summary>
-        public CanvasDrawingSession DrawingSession { get; }
+        public SKCanvas DrawingCanvas { get; }
 
         /// <summary>
-        /// Creates a new <see cref="Win2DGraphicsProvider"/> to handle the given <see cref="CanvasDrawingSession"/>.
+        /// Creates a new <see cref="SkiaGraphicsProvider"/> to handle the given <see cref="DrawingCanvas"/>.
         /// </summary>
-        /// <param name="drawingSession">The <see cref="CanvasDrawingSession"/> that this <see cref="Win2DGraphicsProvider"/> uses to execute drawing commands.</param>
-        public Win2DGraphicsProvider(CanvasDrawingSession drawingSession)
+        /// <param name="drawingCanvas">The <see cref="SKCanvas"/> that this <see cref="SkiaGraphicsProvider"/> uses to execute drawing commands.</param>
+        public SkiaGraphicsProvider(SKCanvas drawingCanvas)
         {
-            if (drawingSession == null)
+            if (drawingCanvas == null)
             {
-                throw new ArgumentNullException("The CanvasDrawingSession managed by this ITurtleGraphicsProvider cannot be null.");
+                throw new ArgumentNullException("The SKCanvas managed by this ITurtleGraphicsProvider cannot be null.");
             }
 
-            DrawingSession = drawingSession;
+            DrawingCanvas = drawingCanvas;
+        }
+
+        private List<SKPaint> Paints = new List<SKPaint>();
+        private SKPaint GetPaint(Color color) => GetPaint(color, 0, true);
+        private SKPaint GetPaint(Color color, float size) => GetPaint(color, size, false);
+        private SKPaint GetPaint(Color color, float size, bool isFilled)
+        {
+            var paint = new SKPaint()
+            {
+                Color = color.GetColor(),
+                Style = isFilled ? SKPaintStyle.Fill : SKPaintStyle.Stroke,
+                StrokeCap = PenType.GetCap(),
+                StrokeWidth = size,
+            };
+            Paints.Add(paint);
+            return paint;
         }
 
         #endregion
@@ -52,19 +66,23 @@ namespace BassClefStudio.Graphics.Core
         /// <inheritdoc/>
         public void Clear(Color baseColor)
         {
-            DrawingSession.Clear(baseColor.GetColor());
+            DrawingCanvas.Clear(baseColor.GetColor());
         }
 
         /// <inheritdoc/>
         public async Task FlushAsync()
         {
-            DrawingSession.Flush();
+            DrawingCanvas.Flush();
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            DrawingSession.Dispose();
+            foreach (var paint in Paints)
+            {
+                paint.Dispose();
+            }
+            DrawingCanvas.Dispose();
         }
 
         #endregion
@@ -74,9 +92,12 @@ namespace BassClefStudio.Graphics.Core
         public void DrawSvg(ISvgDocument svgDocument, Vector2 size, Vector2 location) => DrawSvgInternal(svgDocument, Camera.Scale * size, Camera.GetViewPoint(location));
         private void DrawSvgInternal(ISvgDocument svgDocument, Vector2 size, Vector2 location)
         {
-            if (svgDocument is Win2DSvgDocument svg)
+            if (svgDocument is SkiaSvgDocument svg)
             {
-                DrawingSession.DrawSvg(svg.SvgDocument, size.ToSize(), location);
+                //// TODO: Determine if this is correct scaling procedure.
+                DrawingCanvas.Scale(size.X, size.Y);
+                DrawingCanvas.DrawPicture(svg.SvgDocument.Picture, location.X, location.Y);
+                DrawingCanvas.ResetMatrix();
             }
             else
             {
@@ -101,12 +122,7 @@ namespace BassClefStudio.Graphics.Core
         public void DrawLine(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null, PenType? penType = null) => DrawLineInternal(Camera.GetViewPoint(start), Camera.GetViewPoint(end), penColor, Camera.Scale * penSize, penType);
         private void DrawLineInternal(Vector2 start, Vector2 end, Color? penColor = null, float? penSize = null, PenType? penType = null)
         {
-            DrawingSession.DrawLine(start, end, (penColor ?? PenColor).GetColor(), (penSize ?? PenSize));
-            if ((penType ?? PenType) == PenType.Round)
-            {
-                FillEllipseInternal(start, new Vector2((penSize ?? PenSize) / 2), penColor);
-                FillEllipseInternal(end, new Vector2((penSize ?? PenSize) / 2), penColor);
-            }
+            DrawingCanvas.DrawLine(start.GetPoint(), end.GetPoint(), GetPaint((penColor ?? PenColor), (penSize ?? PenSize)));
         }
 
         /// <inheritdoc/>
@@ -123,8 +139,7 @@ namespace BassClefStudio.Graphics.Core
             }
             else
             {
-                var geometry = CanvasGeometry.CreatePolygon(DrawingSession, points);
-                DrawingSession.DrawGeometry(geometry, (penColor ?? PenColor).GetColor(), (penSize ?? PenSize));
+                DrawingCanvas.DrawPoints(SKPointMode.Polygon, points.Select(p => p.GetPoint()).ToArray(), GetPaint((penColor ?? PenColor), (penSize ?? PenSize)));
             }
         }
 
@@ -132,7 +147,7 @@ namespace BassClefStudio.Graphics.Core
         public void DrawEllipse(Vector2 center, Vector2 radii, Color? penColor = null, float? penSize = null) => DrawEllipseInternal(Camera.GetViewPoint(center), Camera.Scale * radii, penColor, Camera.Scale * penSize);
         private void DrawEllipseInternal(Vector2 center, Vector2 radii, Color? penColor = null, float? penSize = null)
         {
-            DrawingSession.DrawEllipse(center, radii.X, radii.Y, (penColor ?? PenColor).GetColor(), (penSize ?? PenSize));
+            DrawingCanvas.DrawOval(center.X, center.Y, radii.X, radii.Y, GetPaint((penColor ?? PenColor), (penSize ?? PenSize)));
         }
 
         /// <inheritdoc/>
@@ -145,8 +160,7 @@ namespace BassClefStudio.Graphics.Core
             }
             else
             {
-                var geometry = CanvasGeometry.CreatePolygon(DrawingSession, points);
-                DrawingSession.FillGeometry(geometry, (penColor ?? PenColor).GetColor());
+                DrawingCanvas.DrawPoints(SKPointMode.Polygon, points.Select(p => p.GetPoint()).ToArray(), GetPaint((penColor ?? PenColor)));
             }
         }
 
@@ -154,17 +168,38 @@ namespace BassClefStudio.Graphics.Core
         public void FillEllipse(Vector2 center, Vector2 radii, Color? penColor = null) => FillEllipseInternal(Camera.GetViewPoint(center), Camera.Scale * radii, penColor);
         public void FillEllipseInternal(Vector2 center, Vector2 radii, Color? penColor = null)
         {
-            DrawingSession.FillEllipse(center, radii.X, radii.Y, (penColor ?? PenColor).GetColor());
+            DrawingCanvas.DrawOval(center.X, center.Y, radii.X, radii.Y, GetPaint((penColor ?? PenColor)));
         }
 
         #endregion
     }
 
-    internal static class ColorExtensions
+    internal static class SkiaExtensions
     {
-        public static Windows.UI.Color GetColor(this Color color)
+        public static SKColor GetColor(this Color color)
         {
-            return Windows.UI.Color.FromArgb(color.A, color.R, color.G, color.B);
+            return new SKColor(color.R, color.G, color.B, color.A);
+        }
+
+        public static SKStrokeCap GetCap(this PenType penType)
+        {
+            if(penType == PenType.Flat)
+            {
+                return SKStrokeCap.Butt;
+            }
+            else if (penType == PenType.Round)
+            {
+                return SKStrokeCap.Round;
+            }
+            else
+            {
+                throw new ArgumentException($"Unknown pen type: {penType}.", "penType");
+            }
+        }
+
+        public static SKPoint GetPoint(this Vector2 vector)
+        {
+            return new SKPoint(vector.X, vector.Y);
         }
     }
 }
